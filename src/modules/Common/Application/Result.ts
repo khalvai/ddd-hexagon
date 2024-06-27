@@ -9,7 +9,7 @@ export default class Result<T>
     {
         return new Result<U>(value, null);
     }
-    public static fail<U>(notification: Notification): Result<U>
+    public static fail<U>(notification: Notification | null): Result<U>
     {
         return new Result<U>(null, notification);
     }

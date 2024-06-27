@@ -1,7 +1,7 @@
 import { KeyPair } from "src/modules/Common/Infrastructure/Adapters/Output/JWKeyStore";
 
-export const IKeyStore = Symbol("IKeyStore").valueOf();
-export interface IKeyStore
+export const KeyStore = Symbol("KeyStore").valueOf();
+export interface KeyStore
 {
     generate(): Promise<void>;
     getActiveKeyPair(): Promise<[ string, KeyPair ]>;

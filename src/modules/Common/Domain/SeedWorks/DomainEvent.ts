@@ -3,7 +3,7 @@
 import UUIDV4 from "src/modules/Common/Domain/SeedWorks/UUIDV4";
 
 
-export default class DomainEvent<TDomainEvent, DomainEventReactionType = "SAVE">
+export default class DomainEvent<TDomainEvent, DomainEventReactionType = "ChangeTracking">
 {
     private _occurredOn: Date = new Date();
     private _id: UUIDV4 = UUIDV4.create().value;

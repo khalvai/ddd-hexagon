@@ -1,7 +1,7 @@
-import { IHashService } from "src/modules/Common/Application/Output/IHashService";
+import { HashService } from "src/modules/Common/Application/Output/HashService";
 import * as argon2 from "argon2";
 
-export class Argon2HashService implements IHashService
+export class Argon2HashService implements HashService
 {
     public async createHash(data: string): Promise<string>
     {

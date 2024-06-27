@@ -1,10 +1,12 @@
 import * as jose from "node-jose";
 import { Injectable } from "@nestjs/common";
 import { JWK } from "node-jose";
-import { IEncryptionService } from "src/modules/Common/Application/Output/IEncryptionService";
+
+import { EncryptionService } from "src/modules/Common/Application/Output/EncryptionService";
+
 
 @Injectable()
-export default class JWEncryptionService implements IEncryptionService
+export default class JWEncryptionService implements EncryptionService
 {
     public async encrypt(data: string, publicJWK: Awaited<Promise<ReturnType<typeof JWK.asKey>>>, namespace?: string, pid?: string, expiresAt?: Date): Promise<string>
     {

@@ -7,8 +7,9 @@ export default abstract class Entity<TId extends UUIDV4> extends IdentifiedDomai
 {
     private _events: Set<DomainEvent<any>> = new Set();
 
-    public addEvent(event: DomainEvent<any>): void
+    public addEvent(event: DomainEvent<any, any>): void
     {
+
         this._events.add(event);
     }
     public clearEvent(): void
@@ -17,6 +18,12 @@ export default abstract class Entity<TId extends UUIDV4> extends IdentifiedDomai
     }
     public getEvents(): Set<DomainEvent<any>>
     {
+        const a = this._events.entries();
+        for (const e of a)
+        {
+            e[ 0 ].reactionType;
+
+        }
         return this._events;
     }
     public equals(anEntity: Entity<TId>): boolean

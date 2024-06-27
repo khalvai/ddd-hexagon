@@ -1,9 +1,9 @@
 /* eslint-disable accessor-pairs */
 import * as crypto from "crypto";
 import * as fs from "fs";
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { Injectable, InternalServerErrorException, OnModuleInit } from "@nestjs/common";
 import { JWK } from "node-jose";
-import { IKeyStore } from "src/modules/Common/Application/Output/IKeyStore";
+import { KeyStore } from "src/modules/Common/Application/Output/KeyStore";
 
 export interface KeyPair
 {
@@ -12,28 +12,41 @@ export interface KeyPair
 }
 
 @Injectable()
-export default class JWKeyStore implements IKeyStore
+export default class JWKeyStore implements KeyStore, OnModuleInit
 {
-    private _keyStore = new Map<string, string>();
+    private keyStore = new Map<string, string>();
 
-    private _numberOfDaysAKeypairShouldRemainInKeyStoreAfterRegenratingKeyPairInDays = 1;
-    private _refreshTokenLifetimeInDays = 7;
+    private numberOfDaysAKeypairShouldRemainInKeyStoreAfterRegenratingKeyPairInDays = 1;
+    private refreshTokenLifetimeInDays = 7;
 
     public constructor ()
     {
-        this.loadKeys();
+
     }
-    private get _redundantKeysCount(): number
+    async onModuleInit()
     {
-        return this.keysLength - (this._refreshTokenLifetimeInDays + this._numberOfDaysAKeypairShouldRemainInKeyStoreAfterRegenratingKeyPairInDays);
+
+        await this.loadKeys();
+
+
+        if (!this.areThereAnyKeys)
+        {
+            await this.generate();
+            await this.loadKeys();
+        }
+
+    }
+    private get redundantKeysCount(): number
+    {
+        return this.keysLength - (this.refreshTokenLifetimeInDays + this.numberOfDaysAKeypairShouldRemainInKeyStoreAfterRegenratingKeyPairInDays);
     }
     public get keysLength(): number
     {
-        return this._keyStore.size;
+        return this.keyStore.size;
     }
     public async getActiveKeyPair(): Promise<[ string, KeyPair ]>
     {
-        const [ kid, stringifiedKeys ] = Array.from(this._keyStore.entries())[
+        const [ kid, stringifiedKeys ] = Array.from(this.keyStore.entries())[
             this.keysLength - 1
         ];
 
@@ -48,7 +61,7 @@ export default class JWKeyStore implements IKeyStore
     }
     public async getKeyPair(keyId: string): Promise<KeyPair>
     {
-        const stringifiedKeys = this._keyStore.get(keyId);
+        const stringifiedKeys = this.keyStore.get(keyId);
 
         const { privateKey, publicKey } = JSON.parse(stringifiedKeys);
 
@@ -77,7 +90,7 @@ export default class JWKeyStore implements IKeyStore
                     },
                 },
             );
-            this._writeKeys(
+            this.writeKeys(
                 keysId.toString(),
                 JSON.stringify({ privateKey, publicKey }),
             );
@@ -90,11 +103,20 @@ export default class JWKeyStore implements IKeyStore
     {
         try
         {
-            const keyFilenames = fs.readdirSync(
+            let keyFilenames = fs.readdirSync(
                 process.cwd() + "/keys",
                 "utf8",
             );
 
+            if (keyFilenames.length == 0)
+            {
+                await this.generate();
+                keyFilenames = fs.readdirSync(
+                    process.cwd() + "/keys",
+                    "utf8",
+                );
+
+            }
             for (const filename of keyFilenames)
             {
                 const keyPair = fs.readFileSync(
@@ -104,20 +126,20 @@ export default class JWKeyStore implements IKeyStore
 
                 const keyName = filename.split(".")[ 0 ];
 
-                this._keyStore.set(keyName, keyPair);
+                this.keyStore.set(keyName, keyPair);
             }
-            this._revokeRedundantKeys();
+            this.revokeRedundantKeys();
         } catch (error)
         {
             throw new InternalServerErrorException("Error while reading files from FS @JWKeyStore.loadKeys()");
         }
     }
-    private _deleteKey(keyId: string): void
+    private deleteKey(keyId: string): void
     {
         try
         {
             fs.unlinkSync(process.cwd() + "/keys/" + `${ keyId }.json`);
-            this._keyStore.delete(keyId);
+            this.keyStore.delete(keyId);
         } catch (error)
         {
             throw new InternalServerErrorException(
@@ -125,20 +147,20 @@ export default class JWKeyStore implements IKeyStore
             );
         }
     }
-    private _areThereAnyRedundantKeys(): boolean
+    private areThereAnyRedundantKeys(): boolean
     {
-        return (this.keysLength > (this._refreshTokenLifetimeInDays + this._numberOfDaysAKeypairShouldRemainInKeyStoreAfterRegenratingKeyPairInDays));
+        return (this.keysLength > (this.refreshTokenLifetimeInDays + this.numberOfDaysAKeypairShouldRemainInKeyStoreAfterRegenratingKeyPairInDays));
     }
-    private _deleteRedundantKeys(): void
+    private deleteRedundantKeys(): void
     {
-        for (let i = 0; i < this._redundantKeysCount; i++)
+        for (let i = 0; i < this.redundantKeysCount; i++)
         {
-            const keyToBeDeleted = Array.from(this._keyStore.keys())[ 0 ];
+            const keyToBeDeleted = Array.from(this.keyStore.keys())[ 0 ];
 
-            this._deleteKey(keyToBeDeleted);
+            this.deleteKey(keyToBeDeleted);
         }
     }
-    private _writeKeys(keysId: string, keyPair: string): void
+    private writeKeys(keysId: string, keyPair: string): void
     {
         try
         {
@@ -150,11 +172,16 @@ export default class JWKeyStore implements IKeyStore
             );
         }
     }
-    private _revokeRedundantKeys(): void
+    private revokeRedundantKeys(): void
     {
-        if (this._areThereAnyRedundantKeys())
+        if (this.areThereAnyRedundantKeys())
         {
-            this._deleteRedundantKeys();
+            this.deleteRedundantKeys();
         }
+    }
+
+    private get areThereAnyKeys(): boolean
+    {
+        return (this.keysLength > 0) ? true : false;
     }
 }

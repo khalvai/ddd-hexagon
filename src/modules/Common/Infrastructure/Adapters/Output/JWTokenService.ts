@@ -1,20 +1,20 @@
 import { Inject, Injectable, UnauthorizedException } from "@nestjs/common";
-import { IEncryptionService } from "src/modules/Common/Application/Output/IEncryptionService";
-import { IKeyStore } from "src/modules/Common/Application/Output/IKeyStore";
-import { ISigningService } from "src/modules/Common/Application/Output/ISigningService";
-import { ITokenService } from "src/modules/Common/Application/Output/ITokenService";
+import { EncryptionService } from "src/modules/Common/Application/Output/EncryptionService";
+import { KeyStore } from "src/modules/Common/Application/Output/KeyStore";
+import { SigningService } from "src/modules/Common/Application/Output/SigningService";
+import { TokenService } from "src/modules/Common/Application/Output/TokenService";
 
 @Injectable()
-export default class JWTokenService implements ITokenService
+export default class JWTokenService implements TokenService
 {
     public constructor
         (
-            @Inject(ISigningService)
-            private readonly _signingService: ISigningService,
-            @Inject(IEncryptionService)
-            private readonly _encryptionService: IEncryptionService,
-            @Inject(IKeyStore)
-            private readonly _keyStore: IKeyStore
+            @Inject(SigningService)
+            private readonly _signingService: SigningService,
+            @Inject(EncryptionService)
+            private readonly _encryptionService: EncryptionService,
+            @Inject(KeyStore)
+            private readonly _keyStore: KeyStore
         )
     { }
     public async signAndEncrypt(data: string, namespace: string, expiresAtInMinutes: number): Promise<string>

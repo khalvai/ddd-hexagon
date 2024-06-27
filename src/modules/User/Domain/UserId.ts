@@ -7,6 +7,7 @@ export default class UserId extends UUIDV4
 {
     public static createFromInput(aUUID: string): Result<UserId>
     {
+
         const notification = new Notification();
         const uuid = String(aUUID).trim();
 
@@ -17,4 +18,5 @@ export default class UserId extends UUIDV4
         }
         return Result.ok(new UserId({ value: uuid }));
     }
+
 }

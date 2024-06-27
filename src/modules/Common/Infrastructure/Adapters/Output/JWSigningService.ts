@@ -1,9 +1,9 @@
 import { JWK, JWS } from "node-jose";
 import { Injectable } from "@nestjs/common";
-import { ISigningService } from "src/modules/Common/Application/Output/ISigningService";
+import { SigningService } from "src/modules/Common/Application/Output/SigningService";
 
 @Injectable()
-export default class JWSigningService implements ISigningService
+export default class JWSigningService implements SigningService
 {
     public async sign(data: string, privateJWK: Awaited<ReturnType<typeof JWK.asKey>>, namespace?: string, pid?: string, expiresAt?: Date): Promise<string>
     {

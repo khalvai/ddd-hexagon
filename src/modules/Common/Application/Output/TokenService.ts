@@ -1,6 +1,6 @@
-export const ITokenService = Symbol("ITokenService").valueOf();
+export const TokenService = Symbol("TokenService").valueOf();
 
-export interface ITokenService
+export interface TokenService
 {
     signAndEncrypt(data: string, namespace: string, expiresAtInMinutes: number): Promise<string>;
     decryptAndVarify(token: string, namespace: string): Promise<string>;

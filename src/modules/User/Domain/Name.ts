@@ -2,32 +2,32 @@ import Result from "src/modules/Common/Application/Result";
 import ValueObject from "src/modules/Common/Domain/SeedWorks/ValueObject";
 import Notification from "src/modules/Common/Application/Notification";
 
-export default class Nickname extends ValueObject<string>
+export default class Name extends ValueObject<string>
 {
-    public static NICKNAME_COULD_NOT_BE_AN_EMPTY_STRING = "نام  نمیتواند خالی باشد";
-    public static INVALID_LENGTH = "نام  باید بین ۴ الی ۲۰ کاراکتر باشد";
+    public static NAME_CAN_NOT_BE_AN_EMPTY_STRING = "NAME_CAN_NOT_BE_AN_EMPTY_STRING";
+    public static INVALID_NAME_LENGTH = "INVALID_NAME_LENGTH";
 
-    public static createFromInput(aNickname: string): Result<Nickname>
+    public static createFromInput(aName: string): Result<Name>
     {
         const notification = new Notification();
-        const nickname = String(aNickname).trim();
+        const name = String(aName).trim();
 
-        if (nickname.length === 0)
+        if (name.length === 0)
         {
-            notification.addError(Nickname.NICKNAME_COULD_NOT_BE_AN_EMPTY_STRING);
+            notification.addError(Name.NAME_CAN_NOT_BE_AN_EMPTY_STRING);
         }
-        if ((nickname.length < 4) || (nickname.length > 20))
+        if ((name.length < 4) || (name.length > 20))
         {
-            notification.addError(Nickname.INVALID_LENGTH);
+            notification.addError(Name.INVALID_NAME_LENGTH);
         }
         if (notification.hasErrors())
         {
             return Result.fail(notification);
         }
-        return Result.ok(new Nickname({ value: nickname }));
+        return Result.ok(new Name({ value: name }));
     }
-    public static createFromValid(aNickname: string): Result<Nickname>
+    public static createFromValid(aName: string): Result<Name>
     {
-        return Result.ok(new Nickname({ value: aNickname }));
+        return Result.ok(new Name({ value: aName }));
     }
 }

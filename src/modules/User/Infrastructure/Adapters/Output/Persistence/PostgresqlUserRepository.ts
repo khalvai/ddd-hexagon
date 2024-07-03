@@ -1,39 +1,74 @@
 import { UserResponseMessages } from "ResponseMessages/user.response.messages";
 import Result from "src/modules/Common/Application/Result";
-import UserRepository from "src/modules/User/Application/Ports/Output/UserRepository";
 import User from "src/modules/User/Domain/User";
 import UserId from "src/modules/User/Domain/UserId";
 import UserMapper from "src/modules/User/Infrastructure/Adapters/Output/Mapper/UserMapper";
 import UserPersistenceModel from "src/modules/User/Infrastructure/Adapters/Output/Model/UserPersistenceModel";
 import PrismaService from "src/modules/User/Infrastructure/Adapters/Output/Persistence/PrismaService";
 import Notification from "src/modules/Common/Application/Notification";
-import NewUserRegistered from "src/modules/User/Domain/Events/ChangeTracking/NewUserRegisterd";
-import { Outbox, UserStatus } from "@prisma/client";
+import { UserStatus } from "@prisma/client";
 import { Prisma } from '@prisma/client';
+import { UserRepository } from "src/modules/User/Application/Ports/Output/UserRepository";
+import Email from "src/modules/User/Domain/Email";
+import NewUserRegistered from "src/modules/User/Domain/Events/Integration/NewUserRegistered";
+import { OutboxRepository } from "src/modules/User/Application/Ports/Output/OutboxRepository";
+import { OutboxMapper, OutboxModel } from "src/modules/User/Infrastructure/Adapters/Output/Mapper/OutboxMapper";
+import { Inject, Injectable } from "@nestjs/common";
+import PostgresqlOutboxRepository from "src/modules/User/Infrastructure/Adapters/Output/Persistence/PostgresqlOutboxRepository";
+
+
+@Injectable()
 export class PostgresqlUserRepository implements UserRepository
 {
 
-    constructor (private readonly prisma: PrismaService,
-        private readonly userMapper: UserMapper
+    constructor (
+
+        private readonly prisma: PrismaService,
+        private readonly outboxRepository: PostgresqlOutboxRepository,
+        private readonly userMapper: UserMapper,
+        private readonly outboxMapper: OutboxMapper
 
     ) { };
 
     async load(userId: UserId): Promise<Result<User>>
     {
-        const userModel: UserPersistenceModel = "" as any;
-        const z = await this.prisma.user.findUnique({
+        const userModel: UserPersistenceModel = await this.prisma.user.findUnique({
             where: {
                 id: userId.value
             },
 
         });
 
-        z.status.toString();
+        if (userModel)
+        {
+
+
+            const user: User = this.userMapper.toDomain(userModel);
+
+            return Result.ok(user);
+        } else
+        {
+            const notification = new Notification();
+            notification.addError(UserResponseMessages.USER_NOT_FOUND);
+            return Result.fail(notification);
+        }
+
+    }
+
+    async loadByEmail(email: Email): Promise<Result<User>>
+    {
+        const userModel: UserPersistenceModel = await this.prisma.user.findUnique({
+            where: {
+                email: email.value
+            },
+
+        });
+
 
         if (userModel)
         {
 
-            const user: User = this.userMapper.toDomain(userModel);
+            const user = this.userMapper.toDomain(userModel);
 
             return Result.ok(user);
         } else
@@ -47,35 +82,37 @@ export class PostgresqlUserRepository implements UserRepository
     async save(user: User): Promise<Result<void>>
     {
 
-        const userModel: UserPersistenceModel = this.userMapper.toPersistence(user);
-        const outboxes: Outbox[] = [];
+
+
+
+        let userModel = this.userMapper.toPersistence(user);
+
+
+        const outboxes: OutboxModel[] = [];
         const events = user.getEvents();
 
         try
         {
             for (const event of events)
             {
+                console.log("the name of event", event.name);
 
-                if (event.type === NewUserRegistered.name)
+                console.log(event);
+
+
+                if (event.name === NewUserRegistered.name)
                 {
-                    outboxes.push({
-                        id: event.id,
-                        payload: event.payload,
-                        eventType: event.type,
-                        dispatched: false,
-                        createdAt: new Date(Date.now())
-                    });
-
+                    outboxes.push(this.outboxMapper.toPersistence(event));
 
                 }
 
             }
 
 
-            this.prisma.$transaction(async (tx) =>
+            await this.prisma.$transaction(async (tx) =>
             {
-                this.create(userModel, tx);
-                this.insertOutboxes(outboxes, tx);
+                // await this.create(userModel, tx);
+                await this.outboxRepository.save(outboxes, tx);
             });
 
             return Result.ok();
@@ -89,19 +126,11 @@ export class PostgresqlUserRepository implements UserRepository
         }
     }
 
-    private async insertOutboxes(outboxes: Outbox[], tx: Prisma.TransactionClient)
-    {
-        tx.outbox.createMany({
-            data: outboxes
-        });
-
-    }
-
-    private create(userModel: UserPersistenceModel, tx: Prisma.TransactionClient)
+    private async create(userModel: UserPersistenceModel, tx: Prisma.TransactionClient)
     {
 
 
-        tx.user.create({
+        await tx.user.create({
             data: {
                 id: userModel.id,
                 name: userModel.name,
@@ -110,8 +139,10 @@ export class PostgresqlUserRepository implements UserRepository
                 status: userModel.status as UserStatus,
                 updatedAt: userModel.updatedAt,
                 createdAt: userModel.createdAt,
-                concurrencySafeVersion: userModel.concurrencyVersion
+                concurrencySafeVersion: userModel.concurrencySafeVersion
             }
         });
+
+
     }
 }

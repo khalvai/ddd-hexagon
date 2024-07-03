@@ -27,7 +27,7 @@ model User {
 model Outbox {
   id         String @unique
   name  String
-  payload    Json
+  payload    String
   dispatched Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  occurredOn  DateTime @default(now())
 }

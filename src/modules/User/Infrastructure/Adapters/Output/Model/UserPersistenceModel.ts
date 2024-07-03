@@ -8,7 +8,7 @@ export default class UserPersistenceModel
     name: string;
     password: string;
     status: string;
-    concurrencyVersion: number;
+    concurrencySafeVersion: number;
     createdAt: Date;
     updatedAt: Date;
 

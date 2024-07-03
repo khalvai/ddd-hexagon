@@ -1,11 +1,18 @@
 
 
-export interface RegisterCommand
+
+
+export class RegisterCommand
 {
 
-    email: string;
-    password: string;
-    confirmPassword: string;
-    name: string;
-    ip: string;
+    constructor (
+        public readonly email: string,
+        public readonly password: string,
+        public readonly confirmPassword: string,
+        public readonly name: string,
+        public readonly ip: string,
+    ) { }
+
+
+
 }

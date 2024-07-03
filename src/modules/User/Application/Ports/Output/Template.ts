@@ -1,9 +1,9 @@
 export const Template = Symbol('Template').valueOf();
 export interface Template
 {
-    getWelcomeTemplate(userFirstName: string, userLastName: string, locale: 'en' | 'fa'): string;
-    getVerifyEMailTemplate(token: string, mail: string, ip: string, locale: 'en' | 'fa'): string;
-    getChangingMailTemplate(token: string, mail: string, ip: string, locale: 'en' | 'fa'): string;
-    getForgotPasswordTemplate(token: string, mail: string, ip: string, locale: 'en' | 'fa'): string;
-    getYouHaveChangeMailTemplate(latterMail: string, ip: string, changedDate: Date, locale: 'en' | 'fa'): string;
+    getWelcomeTemplate(userFirstName: string, userLastName: string): string;
+    getVerifyEMailTemplate(token: string, email: string, ip: string): string;
+    getChangingEmailTemplate(token: string, email: string, ip: string): string;
+    getForgotPasswordTemplate(token: string, email: string, ip: string): string;
+    getYouHaveChangeEmailTemplate(latterMail: string, ip: string, changedDate: Date): string;
 }

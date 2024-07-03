@@ -9,12 +9,9 @@ import { ApiTags } from "@nestjs/swagger";
 export class ConsumerController
 {
 
-    
-
-
     @RabbitSubscribe({
         queue: 'User:Registered',
-        createQueueIfNotExists: false,
+        createQueueIfNotExists: true,
     })
     onContentGenerated(@Payload() event: any)
     {

@@ -3,13 +3,13 @@ export default class Result<T>
 {
     private constructor (
         private _value: T | null,
-        private notification: Notification | null,
+        private notification: Notification | string,
     ) { }
     public static ok<U>(value?: U): Result<U>
     {
         return new Result<U>(value, null);
     }
-    public static fail<U>(notification: Notification | null): Result<U>
+    public static fail<U>(notification: Notification | null | string): Result<U>
     {
         return new Result<U>(null, notification);
     }
@@ -35,6 +35,14 @@ export default class Result<T>
         {
             throw new Error("Cannot get error from a successful result.");
         }
+
+        if (typeof this.notification === "string")
+        {
+
+            const notification = new Notification();
+            notification.addError(this.notification);
+            this.notification = notification;
+        }
         return this.notification;
     }
     public static combine(results: Result<any>[]): Result<any>
@@ -43,11 +51,14 @@ export default class Result<T>
 
         for (const result of results)
         {
+
             if (result.isFailure())
             {
                 notifications.push(result.getError());
             }
         }
+
+
         if (notifications.length > 0)
         {
             const combinedNotification = new Notification();
@@ -56,8 +67,14 @@ export default class Result<T>
             {
                 combinedNotification.combineWith(notification);
             }
+
+
             return Result.fail(combinedNotification);
         }
         return Result.ok();
+    }
+
+    public static technicalException(e){
+        
     }
 }

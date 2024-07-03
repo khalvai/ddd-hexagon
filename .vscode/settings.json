@@ -27,5 +27,7 @@
     "editor.formatOnSaveMode": "file",
     "typescript.preferences.importModuleSpecifier": "non-relative",
     "javascript.preferences.importModuleSpecifier": "non-relative",
+    "editor.wordWrap": "wordWrapColumn",
+     "editor.wordWrapColumn": 140,
     "jest.autoRun": "off",
 }

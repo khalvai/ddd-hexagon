@@ -1,15 +1,22 @@
-import { Inject, UnprocessableEntityException } from "@nestjs/common";
+import { HttpException, Inject, UnprocessableEntityException } from "@nestjs/common";
+import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { HashService } from "src/modules/Common/Application/Output/HashService";
 import Result from "src/modules/Common/Application/Result";
+import ValueObject from "src/modules/Common/Domain/SeedWorks/ValueObject";
 import { RegisterCommand } from "src/modules/User/Application/Commands/RegisterCommand";
 import { UserRepository } from "src/modules/User/Application/Ports/Output/UserRepository";
+import { RegisterUseCase } from "src/modules/User/Application/UseCases/Register";
 import Email from "src/modules/User/Domain/Email";
+import { NotValidInput } from "src/modules/User/Domain/Exceptions/NotValidInput";
+import IP from "src/modules/User/Domain/IP";
 import Name from "src/modules/User/Domain/Name";
 import Password from "src/modules/User/Domain/Password";
 import User from "src/modules/User/Domain/User";
 import UserId from "src/modules/User/Domain/UserId";
 
-export class RegisterUseCaseImpl
+
+@CommandHandler(RegisterCommand)
+export class RegisterUseCaseImpl implements RegisterUseCase
 {
 
 
@@ -21,30 +28,24 @@ export class RegisterUseCaseImpl
         @Inject(UserRepository)
         private readonly userRepository: UserRepository,
     ) { }
-
-    async handel(command: RegisterCommand): Promise<Result<void>>
+    async execute(command: RegisterCommand): Promise<Result<void>>
     {
 
         const emailResult = Email.createFromInput(command.email);
         const passwordResult = Password.createFromInput(command.password);
         const confirmPasswordResult = Password.createFromInput(command.confirmPassword);
         const nameResult = Name.createFromInput(command.name);
+        const ipResult = IP.createFromInput(command.ip);
 
-        let validationResult: Result<any> = null;
 
-        if (passwordResult.isSuccess() && confirmPasswordResult.isSuccess())
-        {
-            const comparePasswordsResult = confirmPasswordResult.value.compareWithConfirm(passwordResult.value);
 
-            validationResult = Result.combine([ emailResult, nameResult, passwordResult, confirmPasswordResult, comparePasswordsResult ]);
-        }
-        else
+
+        const result = Result.combine([ emailResult, passwordResult, confirmPasswordResult, nameResult, ipResult ]);
+
+        if (result.isFailure())
         {
-            validationResult = Result.combine([ emailResult, passwordResult, confirmPasswordResult, nameResult ]);
-        }
-        if (validationResult.isFailure())
-        {
-            throw new UnprocessableEntityException(validationResult.getError().getMessages());
+
+            throw new NotValidInput(result.getError().getErrors());
         }
 
 
@@ -52,15 +53,27 @@ export class RegisterUseCaseImpl
         ;
         const aUUID = UserId.create().value;
 
+
+
         const user: User = new User();
-        user.register(UserId.createFromInput(aUUID.value).value, nameResult.value, emailResult.value, Password.createFromHashed(hashedPassword).value);
+
+
+        user.register(UserId.createFromInput(aUUID.value).value, nameResult.value, emailResult.value, Password.createFromHashed(hashedPassword).value, ipResult.value);
 
 
 
-        this.userRepository.save(user);
+
+
+        await this.userRepository.save(user);
 
 
 
         return Result.ok();
-    };
+
+
+
+
+    }
+
+
 }

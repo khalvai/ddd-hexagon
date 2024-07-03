@@ -8,7 +8,6 @@ export default class ValueObject<T>
 {
     private _props: Readonly<IProps<T>>;
 
-    // eslint-disable-next-line accessor-pairs
     public get value(): T
     {
         return this._props.value;

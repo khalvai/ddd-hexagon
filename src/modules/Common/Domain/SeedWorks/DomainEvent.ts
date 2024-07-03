@@ -3,15 +3,16 @@
 import UUIDV4 from "src/modules/Common/Domain/SeedWorks/UUIDV4";
 
 
-export default class DomainEvent<TDomainEvent, DomainEventReactionType = "ChangeTracking">
+export default class DomainEvent<Payload, DomainEventReactionType = "ChangeTracking">
 {
     private _occurredOn: Date = new Date();
     private _id: UUIDV4 = UUIDV4.create().value;
-    private _type: string = this.constructor.name;
+    private _name: string = this.constructor.name;
     private _processed: boolean = false;
     private _reactionType?: DomainEventReactionType;
 
-    public constructor (protected _payload: TDomainEvent) { }
+    public constructor (protected _payload: Payload)
+    { }
     public get occurredOn(): Date
     {
         return this._occurredOn;
@@ -21,22 +22,29 @@ export default class DomainEvent<TDomainEvent, DomainEventReactionType = "Change
     {
         return this._id.value;
     }
-    public get type(): string
+    public get name(): string
     {
-        return this._type;
+        return this._name;
     }
-    public set proccessed(proccessed: boolean)
+    public set processed(processed: boolean)
     {
-        this._processed = proccessed;
+        this._processed = processed;
     }
-    public get proccessed(): boolean
+    public get processed(): boolean
     {
         return this._processed;
     }
-    public get payload(): string
+    public get payloadToJson(): string
     {
         return JSON.stringify(this._payload);
     }
+
+    public get payload(): Payload
+    {
+        return this._payload;
+    }
+
+
     public get reactionType(): DomainEventReactionType
     {
         return this._reactionType;

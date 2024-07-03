@@ -1,39 +1,23 @@
 import DomainEvent from "src/modules/Common/Domain/SeedWorks/DomainEvent";
+import IP from "src/modules/User/Domain/IP";
 
-interface IDomainEvent
+interface EventPayload
 {
     userId: string;
     email: string;
     name: string;
+    ip: string;
 }
-export default class NewUserRegistered extends DomainEvent<IDomainEvent, "Integration">
+export default class NewUserRegistered extends DomainEvent<EventPayload, "Integration">
 {
-    public constructor (userId: string, email: string, name: string)
+    public constructor (userId: string, email: string, name: string, ip: string)
     {
-        super({ email, name, userId });
+        super({ email, name, userId, ip });
     }
-    public get email(): string
+
+    public get eventPayload(): EventPayload
     {
-        return this._payload.email;
+        return this._payload;
     }
-    public set email(value: string)
-    {
-        this._payload.email = value;
-    }
-    public get userId(): string
-    {
-        return this._payload.userId;
-    }
-    public set userId(value: string)
-    {
-        this._payload.userId = value;
-    }
-    public get name(): string
-    {
-        return this._payload.name;
-    }
-    public set name(value: string)
-    {
-        this._payload.name = value;
-    }
+
 }

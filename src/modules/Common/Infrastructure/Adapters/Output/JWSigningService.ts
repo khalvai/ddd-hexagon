@@ -5,17 +5,14 @@ import { SigningService } from "src/modules/Common/Application/Output/SigningSer
 @Injectable()
 export default class JWSigningService implements SigningService
 {
-    public async sign(data: string, privateJWK: Awaited<ReturnType<typeof JWK.asKey>>, namespace?: string, pid?: string, expiresAt?: Date): Promise<string>
+    public async sign(data: string, privateJWK: Awaited<ReturnType<typeof JWK.asKey>>, kid?: string, expiresAt?: Date): Promise<string>
     {
         const fields = { cty: "JWT" };
 
-        if (!!namespace)
+
+        if (!!kid)
         {
-            fields[ 'ns' ] = namespace;
-        }
-        if (!!pid)
-        {
-            fields[ 'pid' ] = pid;
+            fields[ 'kid' ] = kid;
         }
         if (!!expiresAt)
         {

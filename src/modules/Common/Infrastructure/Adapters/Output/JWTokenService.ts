@@ -17,7 +17,7 @@ export default class JWTokenService implements TokenService
             private readonly _keyStore: KeyStore
         )
     { }
-    public async signAndEncrypt(data: string, namespace: string, expiresAtInMinutes: number): Promise<string>
+    public async signAndEncrypt(data: string, expiresAtInMinutes: number): Promise<string>
     {
         const [ keyId, { privateKey, publicKey } ] = await this._keyStore.getActiveKeyPair();
 
@@ -25,18 +25,15 @@ export default class JWTokenService implements TokenService
         const expirationDate = toDay.setMinutes(toDay.getMinutes() + expiresAtInMinutes);
 
         const signedToken = await this._signingService.sign(data, privateKey);
-        const encryptedToken = await this._encryptionService.encrypt(signedToken, publicKey, namespace, keyId, new Date(expirationDate));
+        const encryptedToken = await this._encryptionService.encrypt(signedToken, publicKey, keyId, new Date(expirationDate));
 
         return encryptedToken;
     }
-    public async decryptAndVarify(token: string, namespace: string): Promise<string>
+    public async decryptAndVarify(token: string): Promise<string>
     {
         const { pid, expAt, ns } = this._getMetadata(token);
 
-        if (namespace !== ns)
-        {
-            throw new UnauthorizedException("Unrelated Token");
-        }
+
         if (new Date() > new Date(expAt))
         {
             throw new UnauthorizedException();
@@ -53,25 +50,21 @@ export default class JWTokenService implements TokenService
 
         return userData;
     }
-    public async sign(data: string, namespace: string, expiresAtInMinutes: number): Promise<string>
+    public async sign(data: string, expiresAtInMinutes: number): Promise<string>
     {
         const [ keyId, { privateKey } ] = await this._keyStore.getActiveKeyPair();
 
         const toDay = new Date();
         const expirationDate = toDay.setMinutes(toDay.getMinutes() + expiresAtInMinutes);
 
-        const signedToken = await this._signingService.sign(data, privateKey, namespace, keyId, new Date(expirationDate));
+        const signedToken = await this._signingService.sign(data, privateKey, keyId, new Date(expirationDate));
 
         return signedToken;
     }
-    public async verify(token: string, namespace: string): Promise<string>
+    public async verify(token: string): Promise<string>
     {
         const { pid, expAt, ns } = this._getMetadata(token);
 
-        if (ns !== namespace)
-        {
-            throw new UnauthorizedException("Unrelated Token");
-        }
         if (new Date() > new Date(expAt))
         {
             throw new UnauthorizedException("Token Expired");

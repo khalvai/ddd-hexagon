@@ -8,17 +8,14 @@ import { EncryptionService } from "src/modules/Common/Application/Output/Encrypt
 @Injectable()
 export default class JWEncryptionService implements EncryptionService
 {
-    public async encrypt(data: string, publicJWK: Awaited<Promise<ReturnType<typeof JWK.asKey>>>, namespace?: string, pid?: string, expiresAt?: Date): Promise<string>
+    public async encrypt(data: string, publicJWK: Awaited<Promise<ReturnType<typeof JWK.asKey>>>, kid?: string, expiresAt?: Date): Promise<string>
     {
         const fields = { cty: "JWT" };
 
-        if (!!namespace)
+
+        if (!!kid)
         {
-            fields[ 'ns' ] = namespace;
-        }
-        if (!!pid)
-        {
-            fields[ 'pid' ] = pid;
+            fields[ 'kid' ] = kid;
         }
         if (!!expiresAt)
         {

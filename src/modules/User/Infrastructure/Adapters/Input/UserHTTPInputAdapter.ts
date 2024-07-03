@@ -1,26 +1,35 @@
-import { Body, Controller, Get, Inject, Ip, Post } from "@nestjs/common";
+import { Body, Controller, Get, HttpException, HttpStatus, Inject, Ip, Post, UseFilters } from "@nestjs/common";
+import { CommandBus } from "@nestjs/cqrs";
 import { ApiTags } from "@nestjs/swagger";
+import Result from "src/modules/Common/Application/Result";
+import { HttpExceptionFilter } from "src/modules/Common/Infrastructure/Adapters/Output/HttpExceptionFilter";
 import { RegisterCommand } from "src/modules/User/Application/Commands/RegisterCommand";
 import { RegisterUseCase } from "src/modules/User/Application/UseCases/Register";
 import { HttpRegisterCommand } from "src/modules/User/Infrastructure/Adapters/Input/Dto/HttpReginsterCommand";
 
+@UseFilters(HttpExceptionFilter)
 @ApiTags("Authentication")
 @Controller("Auth")
 export default class UserHTTPPInputAdapter
 {
     public constructor
         (
-            @Inject(RegisterUseCase)
-            private readonly _registerInputPort: RegisterUseCase,
+            private commandBus: CommandBus
         )
     { }
     @Post("/Register")
     public async registerNewUser(@Body() registerCommand: HttpRegisterCommand, @Ip() ip: string): Promise<void>
     {
-        await this._registerInputPort.handle({
-            ...registerCommand,
-            ip: ip
-        });
+
+
+
+        const result = await this.commandBus.execute<RegisterCommand, Result<void>>(new RegisterCommand(registerCommand.email, registerCommand.password, registerCommand.confirmPassword, registerCommand.name, ip));
+
+        if (result.isFailure())
+        {
+            throw new HttpException(result.getError().errorMessage(), HttpStatus.BAD_REQUEST);
+        }
+
     }
     // @Post("/Login")
     // public async login(@Body() login: LoginCommand): Promise<LoginDto>

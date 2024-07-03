@@ -25,24 +25,25 @@ export default class UserMapper
         user.status = model.status;
         user.createdAt = model.createdAt;
         user.updatedAt = model.updatedAt;
-        user.concurrencyVersion = model.concurrencyVersion;
+        user.concurrencySafeVersion = model.concurrencySafeVersion;
 
         return user;
     };
 
     toPersistence(user: User): UserPersistenceModel
     {
+
+
         const model: UserPersistenceModel = {
             id: user.userId.value,
             email: user.email.value,
             name: user.name.value,
             password: user.password.value,
             status: user.status,
-            concurrencyVersion: user.concurrencyVersion,
+            concurrencySafeVersion: user.concurrencySafeVersion,
             createdAt: user.createdAt,
             updatedAt: user.updatedAt
         };
-
         return model;
     };
 

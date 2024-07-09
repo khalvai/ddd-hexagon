@@ -1,39 +1,32 @@
 import DomainEvent from "src/modules/Common/Domain/SeedWorks/DomainEvent";
-import IdentifiedDomainObject from "src/modules/Common/Domain/SeedWorks/IdentifiedDomainObject";
-import UUIDV4 from "src/modules/Common/Domain/SeedWorks/UUIDV4";
+import UUID4 from "./UUID4";
 
 
-export default abstract class Entity<TId extends UUIDV4> extends IdentifiedDomainObject<TId>
-{
-    private _events: Set<DomainEvent<any>> = new Set();
+export default abstract class Entity<Id extends UUID4> {
 
-    protected addEvent(event: DomainEvent<any, any>): void
-    {
+    public id: Id
+    private events: Set<DomainEvent<any>> = new Set();
 
-        this._events.add(event);
+    protected addEvent(event: DomainEvent<any, any>): void {
+
+        this.events.add(event);
     }
-    public clearEvent(): void
-    {
-        this._events.clear();
+    public clearEvent(): void {
+        this.events.clear();
     }
-    public getEvents(): Set<DomainEvent<any>>
-    {
-        const a = this._events.entries();
-        for (const e of a)
-        {
-            e[ 0 ].reactionType;
+    public getEvents(): Set<DomainEvent<any>> {
+        const a = this.events.entries();
+        for (const e of a) {
+            e[0].reactionType;
 
         }
-        return this._events;
+        return this.events;
     }
-    public equals(anEntity: Entity<TId>): boolean
-    {
-        if (this === anEntity)
-        {
+    public equals(entity: Entity<Id>): boolean {
+        if (this === entity) {
             return true;
         }
-        if ((anEntity instanceof Entity) && (this.id === anEntity.id))
-        {
+        if ((entity instanceof Entity) && (this.id === entity.id)) {
             return true;
         }
         return false;

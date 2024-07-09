@@ -1,25 +1,21 @@
-import
-{
-    ArgumentsHost,
-    Catch,
-    ExceptionFilter,
-    HttpException,
-    HttpStatus,
-    InternalServerErrorException
+import {
+ArgumentsHost,
+Catch,
+ExceptionFilter,
+HttpException,
+HttpStatus,
+InternalServerErrorException
 } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
 import { HttpAdapterHost } from '@nestjs/core';
-import { NotValidInput } from 'src/modules/User/Domain/Exceptions/NotValidInput';
+import NotValidInputException from 'src/modules/Common/Domain/SeedWorks/Exceptions/NotValidInput';
 // import * as Sentry from '@sentry/node';
 @Catch()
-export class HttpExceptionFilter implements ExceptionFilter
-{
-    constructor (
+export class HttpExceptionFilter implements ExceptionFilter {
+    constructor(
         private readonly httpAdapterHost: HttpAdapterHost,
     ) { }
 
-    catch(exception: HttpException, host: ArgumentsHost): any
-    {
+    catch(exception: HttpException, host: ArgumentsHost): any {
         const { httpAdapter } = this.httpAdapterHost;
 
         const ctx = host.switchToHttp();
@@ -40,16 +36,14 @@ export class HttpExceptionFilter implements ExceptionFilter
 
 
 
-        if (exception instanceof HttpException && exception.getStatus() !== 500)
-        {
+        if (exception instanceof HttpException && exception.getStatus() !== 500) {
             responseBody.message = exception.getResponse();
         }
 
 
 
 
-        if (exception instanceof NotValidInput)
-        {
+        if (exception instanceof NotValidInputException) {
             responseBody.message = exception.cause;
         }
 
@@ -58,8 +52,7 @@ export class HttpExceptionFilter implements ExceptionFilter
 
         httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
 
-        if (httpStatus === HttpStatus.INTERNAL_SERVER_ERROR)
-        {
+        if (httpStatus === HttpStatus.INTERNAL_SERVER_ERROR) {
 
 
             const requestDetail = {

@@ -1,28 +1,22 @@
 import { Template } from "src/modules/User/Application/Ports/Output/Template";
 
 
-export class EJSTemplate implements Template
-{
+export class EJSTemplate implements Template {
 
 
-    getWelcomeTemplate(userFirstName: string, userLastName: string): string
-    {
-        return `some ejs template that uses ${ userFirstName } ${ userLastName }`;
+    getWelcomeTemplate(userFirstName: string, userLastName: string): string {
+        return `some ejs template that uses ${userFirstName} ${userLastName}`;
     }
-    getVerifyEMailTemplate(token: string, email: string, ip: string): string
-    {
-        return `some ejs file that uses ${ token }, ${ email } and ${ ip }`;
+    getVerifyEMailTemplate(token: string, email: string, ip: string): string {
+        return `some ejs file that uses ${token}, ${email} and ${ip}`;
     }
-    getChangingEmailTemplate(token: string, mail: string, ip: string): string
-    {
+    getChangingEmailTemplate(token: string, mail: string, ip: string): string {
         throw new Error("Method not implemented.");
     }
-    getForgotPasswordTemplate(token: string, mail: string, ip: string): string
-    {
+    getForgotPasswordTemplate(token: string, mail: string, ip: string): string {
         throw new Error("Method not implemented.");
     }
-    getYouHaveChangeEmailTemplate(latterMail: string, ip: string, changedDate: Date): string
-    {
+    getYouHaveChangeEmailTemplate(latterMail: string, ip: string, changedDate: Date): string {
         throw new Error("Method not implemented.");
     }
 }

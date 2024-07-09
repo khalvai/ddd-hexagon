@@ -2,8 +2,7 @@ import { Injectable } from "@nestjs/common";
 import DomainEvent from "src/modules/Common/Domain/SeedWorks/DomainEvent";
 
 
-export interface OutboxModel
-{
+export interface OutboxModel {
 
     id: string;
     name: string;
@@ -15,17 +14,15 @@ export interface OutboxModel
 }
 
 // @Injectable()
-export class OutboxMapper
-{
+export class OutboxMapper {
 
 
-    toPersistence(event: DomainEvent<any, any>): OutboxModel
-    {
+    toPersistence(event: DomainEvent<any, any>): OutboxModel {
         return {
             occurredOn: event.occurredOn,
-            id: event.id,
+            id: event.id.value,
             payload: event.payload,
-            dispatched: event.processed,
+            dispatched: false,
             name: event.name
         };
     }

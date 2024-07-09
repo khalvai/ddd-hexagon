@@ -1,12 +1,9 @@
 
-export default class IdentitySpecification<TEntity>
-{
-    public check(): boolean
-    {
+export default class IdentitySpecification<Entity> {
+    public check(): boolean {
         return true;
     }
-    public isSatisfiedBy(): boolean
-    {
+    public isSatisfiedBy(): boolean {
         return true;
     }
 }

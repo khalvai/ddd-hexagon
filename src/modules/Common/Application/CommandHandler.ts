@@ -1,4 +1,3 @@
-export interface CommandHandler<Command, Result = void>
-{
+export interface CommandHandler<Command, Result = void> {
     handle(command: Command): Result;
 }

@@ -18,14 +18,14 @@ export default class UserMapper
 
         const user: User = new User();
 
-        user.userId = UserId.createFromInput("").value;
-        user.email = Email.createFromValid(model.email).value;
-        user.name = Name.createFromValid(model.name).value;
-        user.password = Password.createFromHashed(model.password).value;
-        user.status = model.status;
-        user.createdAt = model.createdAt;
-        user.updatedAt = model.updatedAt;
-        user.concurrencySafeVersion = model.concurrencySafeVersion;
+        // user.userId = UserId.createFromInput("").value;
+        // user.email = Email.createFromValid(model.email).value;
+        // user.name = Name.createFromValid(model.name).value;
+        // user.password = Password.createFromHashed(model.password).value;
+        // user.status = model.status;
+        // user.createdAt = model.createdAt;
+        // user.updatedAt = model.updatedAt;
+        // user.concurrencySafeVersion = model.concurrencySafeVersion;
 
         return user;
     };

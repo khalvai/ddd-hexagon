@@ -15,13 +15,13 @@ import { OutboxRepository } from "src/modules/User/Application/Ports/Output/Outb
 import { OutboxMapper, OutboxModel } from "src/modules/User/Infrastructure/Adapters/Output/Mapper/OutboxMapper";
 import { Inject, Injectable } from "@nestjs/common";
 import PostgresqlOutboxRepository from "src/modules/User/Infrastructure/Adapters/Output/Persistence/PostgresqlOutboxRepository";
+import UserNotFoundException from "src/modules/Common/Domain/SeedWorks/Exceptions/UserNotFoundException";
 
 
 @Injectable()
-export class PostgresqlUserRepository implements UserRepository
-{
+export class PostgresqlUserRepository implements UserRepository {
 
-    constructor (
+    constructor(
 
         private readonly prisma: PrismaService,
         private readonly outboxRepository: PostgresqlOutboxRepository,
@@ -30,34 +30,30 @@ export class PostgresqlUserRepository implements UserRepository
 
     ) { };
 
-    async load(userId: UserId): Promise<Result<User>>
-    {
-        const userModel: UserPersistenceModel = await this.prisma.user.findUnique({
+    async load(userId: UserId): Promise<Result<User>> {
+        const userModel = await this.prisma.user.findUnique({
             where: {
                 id: userId.value
             },
 
         });
 
-        if (userModel)
-        {
+        if (userModel) {
 
 
             const user: User = this.userMapper.toDomain(userModel);
 
-            return Result.ok(user);
-        } else
-        {
-            const notification = new Notification();
-            notification.addError(UserResponseMessages.USER_NOT_FOUND);
-            return Result.fail(notification);
+            return {
+                ok: user
+            };
+        } else {
+            return { failure: UserNotFoundException };
         }
 
     }
 
-    async loadByEmail(email: Email): Promise<Result<User>>
-    {
-        const userModel: UserPersistenceModel = await this.prisma.user.findUnique({
+    async loadByEmail(email: Email): Promise<Result<User>> {
+        const userModel = await this.prisma.user.findUnique({
             where: {
                 email: email.value
             },
@@ -65,22 +61,17 @@ export class PostgresqlUserRepository implements UserRepository
         });
 
 
-        if (userModel)
-        {
+        if (userModel) {
 
             const user = this.userMapper.toDomain(userModel);
 
-            return Result.ok(user);
-        } else
-        {
-            const notification = new Notification();
-            notification.addError(UserResponseMessages.USER_NOT_FOUND);
-            return Result.fail(notification);
+            return { ok: user };
+        } else {
+            return { failure: UserNotFoundException };
         }
 
     }
-    async save(user: User): Promise<Result<void>>
-    {
+    async save(user: User): Promise<Result<void>> {
 
 
 
@@ -90,44 +81,30 @@ export class PostgresqlUserRepository implements UserRepository
 
         const outboxes: OutboxModel[] = [];
         const events = user.getEvents();
+        for (const event of events) {
+            console.log("the name of event", event.name);
 
-        try
-        {
-            for (const event of events)
-            {
-                console.log("the name of event", event.name);
-
-                console.log(event);
+            console.log(event);
 
 
-                if (event.name === NewUserRegistered.name)
-                {
-                    outboxes.push(this.outboxMapper.toPersistence(event));
-
-                }
+            if (event.name === NewUserRegistered.name) {
+                outboxes.push(this.outboxMapper.toPersistence(event));
 
             }
 
-
-            await this.prisma.$transaction(async (tx) =>
-            {
-                // await this.create(userModel, tx);
-                await this.outboxRepository.save(outboxes, tx);
-            });
-
-            return Result.ok();
-        } catch (error)
-        {
-            console.log(error);
-            const notification = new Notification();
-            notification.addError(UserResponseMessages.FAILED_TRANSACTION);
-            return Result.fail(notification);
-
         }
+
+
+        await this.prisma.$transaction(async (tx) => {
+            // await this.create(userModel, tx);
+            await this.outboxRepository.save(outboxes, tx);
+        });
+
+        return { ok: undefined };
+
     }
 
-    private async create(userModel: UserPersistenceModel, tx: Prisma.TransactionClient)
-    {
+    private async create(userModel: UserPersistenceModel, tx: Prisma.TransactionClient) {
 
 
         await tx.user.create({

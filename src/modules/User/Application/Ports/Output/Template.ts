@@ -1,6 +1,5 @@
 export const Template = Symbol('Template').valueOf();
-export interface Template
-{
+export interface Template {
     getWelcomeTemplate(userFirstName: string, userLastName: string): string;
     getVerifyEMailTemplate(token: string, email: string, ip: string): string;
     getChangingEmailTemplate(token: string, email: string, ip: string): string;

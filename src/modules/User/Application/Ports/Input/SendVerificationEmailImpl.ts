@@ -8,27 +8,26 @@ import { Template } from "src/modules/User/Application/Ports/Output/Template";
 import { SendVerificationEmail } from "src/modules/User/Application/UseCases/SendVerificationEmail";
 import Email from "src/modules/User/Domain/Email";
 
-export class SendVerificationEmailImp implements SendVerificationEmail
-{
+export class SendVerificationEmailImp implements SendVerificationEmail {
 
-    constructor (
+    constructor(
         @Inject(TokenService) private readonly tokenService: TokenService,
         @Inject(Template) private readonly template: Template,
         @Inject(EmailServiceProvider) private readonly emailServicerProvider: EmailServiceProvider
 
     ) { }
-    async handle(command: SendVerificationEmailCommand): Promise<Result<void>>
-    {
+    async handle(command: SendVerificationEmailCommand): Promise<Result<void>> {
 
         const token = await this.tokenService.signAndEncrypt(JSON.stringify(command), 4);
 
         const template = this.template.getVerifyEMailTemplate(token, command.email, command.ip);
 
-        const email = Email.createFromValid(command.email).value;
+        const email = Email.createFromValid(command.email);
+
 
         await this.emailServicerProvider.send(template, email);
 
-        return Result.ok();
+        return { ok: undefined }
 
 
     }

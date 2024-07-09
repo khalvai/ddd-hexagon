@@ -25,9 +25,9 @@ export default class UserHTTPPInputAdapter
 
         const result = await this.commandBus.execute<RegisterCommand, Result<void>>(new RegisterCommand(registerCommand.email, registerCommand.password, registerCommand.confirmPassword, registerCommand.name, ip));
 
-        if (result.isFailure())
+        if ("failure" in result)
         {
-            throw new HttpException(result.getError().errorMessage(), HttpStatus.BAD_REQUEST);
+            throw result.failure;
         }
 
     }

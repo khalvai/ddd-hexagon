@@ -1,14 +1,13 @@
 import { Injectable } from "@nestjs/common";
 import { Prisma } from "@prisma/client";
-import Result from "src/modules/Common/Application/Result";
 import { OutboxRepository } from "src/modules/User/Application/Ports/Output/OutboxRepository";
 import { OutboxModel } from "src/modules/User/Infrastructure/Adapters/Output/Mapper/OutboxMapper";
 import { PrismaPostgresqlOutboxRepo } from "src/modules/User/Infrastructure/Adapters/Output/Persistence/PostgresqlOutboxRepo";
 import PrismaService from "src/modules/User/Infrastructure/Adapters/Output/Persistence/PrismaService";
-
+import Result from "src/modules/Common/Application/Result";
 
 @Injectable()
-export default class PostgresqlOutboxRepository implements PrismaPostgresqlOutboxRepo
+export default class PrismaPostgresqlOutboxRepositoryImpl implements PrismaPostgresqlOutboxRepo
 {
     constructor (private readonly prisma: PrismaService) { }
 
@@ -57,7 +56,7 @@ export default class PostgresqlOutboxRepository implements PrismaPostgresqlOutbo
             }
         });
 
-        return Result.ok(outboxes);
+        return { ok: outboxes };
 
 
     }

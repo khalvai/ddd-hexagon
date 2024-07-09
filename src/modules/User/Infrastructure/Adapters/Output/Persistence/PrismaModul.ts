@@ -13,11 +13,11 @@ import PrismaService from 'src/modules/User/Infrastructure/Adapters/Output/Persi
                         logger: new Logger('PrismaMiddleware'),
                         logLevel: 'log', // default is `debug`
                         logMessage: (query: QueryInfo) =>
-                            `${ chalk.blueBright('[Prisma Query]') } ${ chalk.yellowBright(query.model) }.${ chalk.yellowBright(query.action) } - ${ chalk.magentaBright(query.executionTime) }ms`
+                            `${chalk.blueBright('[Prisma Query]')} ${chalk.yellowBright(query.model)}.${chalk.yellowBright(query.action)} - ${chalk.magentaBright(query.executionTime)}ms`
                     })
                 ],
                 prismaOptions: {
-                    log: [ 'error', 'info' ],
+                    log: ['error', 'info'],
                     errorFormat: 'pretty'
                 },
                 explicitConnect: true
@@ -25,7 +25,7 @@ import PrismaService from 'src/modules/User/Infrastructure/Adapters/Output/Persi
         }),
 
     ],
-    providers: [ PrismaService ],
-    exports: [ PrismaService ],
+    providers: [PrismaService],
+    exports: [PrismaService],
 })
 export default class PrismaModule { }

@@ -1,6 +1,5 @@
 import { Module } from "@nestjs/common";
 import { CqrsModule } from "@nestjs/cqrs";
-import { Prisma } from "@prisma/client";
 import { EncryptionService } from "src/modules/Common/Application/Output/EncryptionService";
 import { HashService } from "src/modules/Common/Application/Output/HashService";
 import { KeyStore } from "src/modules/Common/Application/Output/KeyStore";
@@ -11,6 +10,7 @@ import JWEncryptionService from "src/modules/Common/Infrastructure/Adapters/Outp
 import JWKeyStore from "src/modules/Common/Infrastructure/Adapters/Output/JWKeyStore";
 import JWSigningService from "src/modules/Common/Infrastructure/Adapters/Output/JWSigningService";
 import JWTokenService from "src/modules/Common/Infrastructure/Adapters/Output/JWTokenService";
+import { RabbitMQModuleImpl } from "src/modules/Common/Infrastructure/Adapters/Output/RabbitMQPModule";
 import { RegisterUseCaseImpl } from "src/modules/User/Application/Ports/Input/RegisterUseCaseImpl";
 import { EmailServiceProvider } from "src/modules/User/Application/Ports/Output/EmailServiceProvider";
 import { OutboxRepository } from "src/modules/User/Application/Ports/Output/OutboxRepository";
@@ -20,6 +20,8 @@ import UserHTTPPInputAdapter from "src/modules/User/Infrastructure/Adapters/Inpu
 import { LiaraEmailServiceProvider } from "src/modules/User/Infrastructure/Adapters/Output/LiaraEmailServiceProvider";
 import { OutboxMapper } from "src/modules/User/Infrastructure/Adapters/Output/Mapper/OutboxMapper";
 import UserMapper from "src/modules/User/Infrastructure/Adapters/Output/Mapper/UserMapper";
+import { OutboxDispatcher } from "src/modules/User/Infrastructure/Adapters/Output/OutboxDispatcher";
+import PrismaPostgresqlOutboxRepositoryImpl from "src/modules/User/Infrastructure/Adapters/Output/Persistence/PostgresqlOutboxRepository";
 import PostgresqlOutboxRepository from "src/modules/User/Infrastructure/Adapters/Output/Persistence/PostgresqlOutboxRepository";
 import { PostgresqlUserRepository } from "src/modules/User/Infrastructure/Adapters/Output/Persistence/PostgresqlUserRepository";
 import PrismaModule from "src/modules/User/Infrastructure/Adapters/Output/Persistence/PrismaModul";
@@ -30,8 +32,9 @@ import { EJSTemplate } from "src/modules/User/Infrastructure/Adapters/Output/Tem
     imports: [
         PrismaModule,
         CqrsModule,
+        // RabbitMQModuleImpl
     ],
-    controllers: [ UserHTTPPInputAdapter ],
+    controllers: [UserHTTPPInputAdapter],
     providers: [
         {
             provide: UserRepository,
@@ -39,11 +42,11 @@ import { EJSTemplate } from "src/modules/User/Infrastructure/Adapters/Output/Tem
         },
         {
             provide: PostgresqlOutboxRepository,
-            useClass: PostgresqlOutboxRepository
+            useClass: PrismaPostgresqlOutboxRepositoryImpl
         },
         {
             provide: OutboxRepository,
-            useClass: PostgresqlOutboxRepository
+            useClass: PrismaPostgresqlOutboxRepositoryImpl
         },
         {
             provide: TokenService,
@@ -77,6 +80,7 @@ import { EJSTemplate } from "src/modules/User/Infrastructure/Adapters/Output/Tem
         RegisterUseCaseImpl,
         OutboxMapper,
         UserMapper,
+        // OutboxDispatcher,
     ]
 })
 export class UserModule { }

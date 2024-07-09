@@ -1,11 +1,9 @@
 import ConcurrencySafeEntity from 'src/modules/Common/Domain/SeedWorks/ConcurrencySafeEntity';
-import Entity from 'src/modules/Common/Domain/SeedWorks/Entity';
-import UUIDV4 from 'src/modules/Common/Domain/SeedWorks/UUIDV4';
+import UUID4 from 'src/modules/Common/Domain/SeedWorks/UUID4';
 
 export default abstract class AggregateRoot<
-    TId extends UUIDV4,
-> extends ConcurrencySafeEntity<TId>
-{
+    Id extends UUID4,
+> extends ConcurrencySafeEntity<Id> {
     public abstract validatePreconditions(...args: string[]): void;
     public abstract validateInvariant(): void;
 }

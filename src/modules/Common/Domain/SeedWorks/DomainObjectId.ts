@@ -1,5 +1,5 @@
-import UUIDV4 from "src/modules/Common/Domain/SeedWorks/UUIDV4";
+import UUID4 from "src/modules/Common/Domain/SeedWorks/UUID4";
 
 
 
-export abstract class DomainObjectId extends UUIDV4 { }
+export abstract class DomainObjectId extends UUID4 { }

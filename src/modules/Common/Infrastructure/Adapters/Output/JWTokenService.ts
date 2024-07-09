@@ -5,8 +5,7 @@ import { SigningService } from "src/modules/Common/Application/Output/SigningSer
 import { TokenService } from "src/modules/Common/Application/Output/TokenService";
 
 @Injectable()
-export default class JWTokenService implements TokenService
-{
+export default class JWTokenService implements TokenService {
     public constructor
         (
             @Inject(SigningService)
@@ -15,11 +14,9 @@ export default class JWTokenService implements TokenService
             private readonly _encryptionService: EncryptionService,
             @Inject(KeyStore)
             private readonly _keyStore: KeyStore
-        )
-    { }
-    public async signAndEncrypt(data: string, expiresAtInMinutes: number): Promise<string>
-    {
-        const [ keyId, { privateKey, publicKey } ] = await this._keyStore.getActiveKeyPair();
+        ) { }
+    public async signAndEncrypt(data: string, expiresAtInMinutes: number): Promise<string> {
+        const [keyId, { privateKey, publicKey }] = await this._keyStore.getActiveKeyPair();
 
         const toDay = new Date();
         const expirationDate = toDay.setMinutes(toDay.getMinutes() + expiresAtInMinutes);
@@ -29,19 +26,16 @@ export default class JWTokenService implements TokenService
 
         return encryptedToken;
     }
-    public async decryptAndVarify(token: string): Promise<string>
-    {
+    public async decryptAndVarify(token: string): Promise<string> {
         const { pid, expAt, ns } = this._getMetadata(token);
 
 
-        if (new Date() > new Date(expAt))
-        {
+        if (new Date() > new Date(expAt)) {
             throw new UnauthorizedException();
         }
         const keyPair = await this._keyStore.getKeyPair(pid);
 
-        if (!keyPair)
-        {
+        if (!keyPair) {
             throw new UnauthorizedException();
         }
         const sinedUserData = await this._encryptionService.decrypt(token, keyPair.privateKey);
@@ -50,9 +44,8 @@ export default class JWTokenService implements TokenService
 
         return userData;
     }
-    public async sign(data: string, expiresAtInMinutes: number): Promise<string>
-    {
-        const [ keyId, { privateKey } ] = await this._keyStore.getActiveKeyPair();
+    public async sign(data: string, expiresAtInMinutes: number): Promise<string> {
+        const [keyId, { privateKey }] = await this._keyStore.getActiveKeyPair();
 
         const toDay = new Date();
         const expirationDate = toDay.setMinutes(toDay.getMinutes() + expiresAtInMinutes);
@@ -61,27 +54,23 @@ export default class JWTokenService implements TokenService
 
         return signedToken;
     }
-    public async verify(token: string): Promise<string>
-    {
+    public async verify(token: string): Promise<string> {
         const { pid, expAt, ns } = this._getMetadata(token);
 
-        if (new Date() > new Date(expAt))
-        {
+        if (new Date() > new Date(expAt)) {
             throw new UnauthorizedException("Token Expired");
         }
         const keyPair = await this._keyStore.getKeyPair(pid);
 
-        if (!keyPair)
-        {
+        if (!keyPair) {
             throw new UnauthorizedException();
         }
         const userData = await this._signingService.verify(token, keyPair.publicKey);
 
         return userData;
     }
-    private _getMetadata(token: string): { pid: string, expAt: string; ns: string; }
-    {
-        const encodedHeader = token.split(".")[ 0 ];
+    private _getMetadata(token: string): { pid: string, expAt: string; ns: string; } {
+        const encodedHeader = token.split(".")[0];
 
         const { pid, expAt, ns } = JSON.parse(Buffer.from(encodedHeader, "base64").toString("utf8")) as { pid: string, expAt: string; ns: string; };
 

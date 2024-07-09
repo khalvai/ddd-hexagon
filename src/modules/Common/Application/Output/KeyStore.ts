@@ -1,4 +1,4 @@
-import { KeyPair } from "src/modules/Common/Infrastructure/Adapters/Output/JWKeyStore";
+import { KeyPair } from "src/modules/Common/Infrastructure/Output/JWKeyStore";
 
 export const KeyStore = Symbol("KeyStore").valueOf();
 export interface KeyStore {

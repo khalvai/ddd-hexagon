@@ -2,7 +2,7 @@ import { HttpException, Inject, UnprocessableEntityException } from "@nestjs/com
 import { CommandHandler, ICommandHandler } from "@nestjs/cqrs";
 import { HashService } from "src/modules/Common/Application/Output/HashService";
 import Result from "src/modules/Common/Application/Result";
-import ValueObject from "src/modules/Common/Domain/SeedWorks/ValueObject";
+import ValueObject from "src/modules/Common/Domain/ValueObject";
 import { RegisterCommand } from "src/modules/User/Application/Commands/RegisterCommand";
 import { UserRepository } from "src/modules/User/Application/Ports/Output/UserRepository";
 import { RegisterUseCase } from "src/modules/User/Application/UseCases/Register";

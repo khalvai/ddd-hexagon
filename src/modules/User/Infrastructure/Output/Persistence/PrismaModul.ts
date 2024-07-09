@@ -1,7 +1,7 @@
 import { Logger, Module } from '@nestjs/common';
 import { PrismaModule as _PrismaModule, QueryInfo, loggingMiddleware } from 'nestjs-prisma';
 import chalk from 'chalk';
-import PrismaService from 'src/modules/User/Infrastructure/Adapters/Output/Persistence/PrismaService';
+import PrismaService from 'src/modules/User/Infrastructure/Output/Persistence/PrismaService';
 
 @Module({
     imports: [

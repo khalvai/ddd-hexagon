@@ -1,5 +1,5 @@
 import Result from "src/modules/Common/Application/Result";
-import ValueObject from "src/modules/Common/Domain/SeedWorks/ValueObject";
+import ValueObject from "src/modules/Common/Domain/ValueObject";
 import Notification from "src/modules/Common/Application/Notification";
 import { isIP } from "net";
 export default class IP extends ValueObject<string> {

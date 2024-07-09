@@ -2,7 +2,7 @@ import { AmqpConnection, RabbitMQModule } from '@golevelup/nestjs-rabbitmq';
 import { Global, Module, OnModuleInit } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Publisher } from 'src/modules/Common/Application/Output/Publisher';
-import { RabbitMQPublisher } from 'src/modules/Common/Infrastructure/Adapters/Output/RabbitMQPublisher';
+import { RabbitMQPublisher } from 'src/modules/Common/Infrastructure/Output/RabbitMQPublisher';
 
 
 

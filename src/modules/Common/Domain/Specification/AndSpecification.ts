@@ -1,4 +1,4 @@
-import Specification from "src/modules/Common/Domain/SeedWorks/Specification/Specification";
+import Specification from "src/modules/Common/Domain/Specification/Specification";
 
 export default class AndSpecification<Entity> extends Specification<Entity> {
     public constructor(private readonly _left: Specification<Entity>, private readonly _right: Specification<Entity>) {

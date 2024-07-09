@@ -1,4 +1,4 @@
-import Exception from "src/modules/Common/Domain/SeedWorks/Exceptions/Exception";
+import Exception from "src/modules/Common/Domain/Exceptions/Exception";
 class UserNotFoundException extends Exception {
     constructor() {
         super("USER_NOT_FOUND");

@@ -5,16 +5,14 @@ import Password from "src/modules/User/Domain/Password";
 import User from "src/modules/User/Domain/User";
 import UserId from "src/modules/User/Domain/UserId";
 import UserStatus from "src/modules/User/Domain/UserStatus";
-import UserPersistenceModel from "src/modules/User/Infrastructure/Adapters/Output/Model/UserPersistenceModel";
+import UserPersistenceModel from "src/modules/User/Infrastructure/Output/Model/UserPersistenceModel";
 
 
 @Injectable()
-export default class UserMapper
-{
+export default class UserMapper {
 
 
-    toDomain(model: UserPersistenceModel): User
-    {
+    toDomain(model: UserPersistenceModel): User {
 
         const user: User = new User();
 
@@ -30,8 +28,7 @@ export default class UserMapper
         return user;
     };
 
-    toPersistence(user: User): UserPersistenceModel
-    {
+    toPersistence(user: User): UserPersistenceModel {
 
 
         const model: UserPersistenceModel = {

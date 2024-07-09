@@ -1,7 +1,7 @@
 import * as crypto from "crypto";
 import Result from "src/modules/Common/Application/Result";
-import Errors from "src/modules/Common/Domain/SeedWorks/Exceptions/Errors";
-import ValueObject from "src/modules/Common/Domain/SeedWorks/ValueObject";
+import Errors from "src/modules/Common/Domain/Exceptions/Errors";
+import ValueObject from "src/modules/Common/Domain/ValueObject";
 import Notification from "src/modules/Common/Application/Notification";
 export default class UUID4 extends ValueObject<string> {
     private static UUID4_VALIDATOR = /^[0-9A-F]{8}-[0-9A-F]{4}-[4][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;

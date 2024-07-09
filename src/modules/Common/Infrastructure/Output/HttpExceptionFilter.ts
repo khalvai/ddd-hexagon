@@ -1,13 +1,13 @@
 import {
-ArgumentsHost,
-Catch,
-ExceptionFilter,
-HttpException,
-HttpStatus,
-InternalServerErrorException
+    ArgumentsHost,
+    Catch,
+    ExceptionFilter,
+    HttpException,
+    HttpStatus,
+    InternalServerErrorException
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import NotValidInputException from 'src/modules/Common/Domain/SeedWorks/Exceptions/NotValidInput';
+import NotValidInputException from 'src/modules/Common/Domain/Exceptions/NotValidInput';
 // import * as Sentry from '@sentry/node';
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {

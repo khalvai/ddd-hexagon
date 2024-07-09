@@ -2,9 +2,9 @@ import { UserResponseMessages } from "ResponseMessages/user.response.messages";
 import Result from "src/modules/Common/Application/Result";
 import User from "src/modules/User/Domain/User";
 import UserId from "src/modules/User/Domain/UserId";
-import UserMapper from "src/modules/User/Infrastructure/Adapters/Output/Mapper/UserMapper";
-import UserPersistenceModel from "src/modules/User/Infrastructure/Adapters/Output/Model/UserPersistenceModel";
-import PrismaService from "src/modules/User/Infrastructure/Adapters/Output/Persistence/PrismaService";
+import UserMapper from "src/modules/User/Infrastructure/Output/Mapper/UserMapper";
+import UserPersistenceModel from "src/modules/User/Infrastructure/Output/Model/UserPersistenceModel";
+import PrismaService from "src/modules/User/Infrastructure/Output/Persistence/PrismaService";
 import Notification from "src/modules/Common/Application/Notification";
 import { UserStatus } from "@prisma/client";
 import { Prisma } from '@prisma/client';
@@ -12,10 +12,10 @@ import { UserRepository } from "src/modules/User/Application/Ports/Output/UserRe
 import Email from "src/modules/User/Domain/Email";
 import NewUserRegistered from "src/modules/User/Domain/Events/Integration/NewUserRegistered";
 import { OutboxRepository } from "src/modules/User/Application/Ports/Output/OutboxRepository";
-import { OutboxMapper, OutboxModel } from "src/modules/User/Infrastructure/Adapters/Output/Mapper/OutboxMapper";
+import { OutboxMapper, OutboxModel } from "src/modules/User/Infrastructure/Output/Mapper/OutboxMapper";
 import { Inject, Injectable } from "@nestjs/common";
-import PostgresqlOutboxRepository from "src/modules/User/Infrastructure/Adapters/Output/Persistence/PostgresqlOutboxRepository";
-import UserNotFoundException from "src/modules/Common/Domain/SeedWorks/Exceptions/UserNotFoundException";
+import PostgresqlOutboxRepository from "src/modules/User/Infrastructure/Output/Persistence/PostgresqlOutboxRepository";
+import UserNotFoundException from "src/modules/Common/Domain/Exceptions/UserNotFoundException";
 
 
 @Injectable()

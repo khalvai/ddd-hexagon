@@ -1,4 +1,4 @@
-import Specification from "src/modules/Common/Domain/SeedWorks/Specification/Specification";
+import Specification from "src/modules/Common/Domain/Specification/Specification";
 
 export default class NotSpecification<TEntity> extends Specification<TEntity> {
     public constructor(private readonly _specification: Specification<TEntity>) {

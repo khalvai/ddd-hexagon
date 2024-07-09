@@ -2,8 +2,8 @@ import { OutboxRepository } from 'src/modules/User/Application/Ports/Output/Outb
 import { Publisher } from 'src/modules/Common/Application/Output/Publisher';
 import { Inject, Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import PostgresqlOutboxRepository from 'src/modules/User/Infrastructure/Adapters/Output/Persistence/PostgresqlOutboxRepository';
-import { PrismaPostgresqlOutboxRepo } from 'src/modules/User/Infrastructure/Adapters/Output/Persistence/PostgresqlOutboxRepo';
+import PostgresqlOutboxRepository from 'src/modules/User/Infrastructure/Output/Persistence/PostgresqlOutboxRepository';
+import { PrismaPostgresqlOutboxRepo } from 'src/modules/User/Infrastructure/Output/Persistence/PostgresqlOutboxRepo';
 
 
 

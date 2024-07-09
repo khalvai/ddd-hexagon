@@ -1,6 +1,6 @@
 import * as crypto from "crypto";
 import Result from "src/modules/Common/Application/Result";
-import ValueObject from "src/modules/Common/Domain/SeedWorks/ValueObject";
+import ValueObject from "src/modules/Common/Domain/ValueObject";
 
 export default class UUIDV5 extends ValueObject<string> {
     private static _UUIDV5_VALIDATOR = /^[0-9A-F]{8}-[0-9A-F]{4}-[5][0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i;

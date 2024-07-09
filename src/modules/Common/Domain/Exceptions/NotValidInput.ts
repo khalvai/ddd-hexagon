@@ -1,4 +1,4 @@
-import Exception from "src/modules/Common/Domain/SeedWorks/Exceptions/Exception";
+import Exception from "src/modules/Common/Domain/Exceptions/Exception";
 
 export default class NotValidInputException extends Exception {
 

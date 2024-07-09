@@ -1,4 +1,4 @@
-import DomainEvent from "src/modules/Common/Domain/SeedWorks/DomainEvent";
+import DomainEvent from "src/modules/Common/Domain/DomainEvent";
 import IP from "src/modules/User/Domain/IP";
 
 interface EventPayload {

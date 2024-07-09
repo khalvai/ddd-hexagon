@@ -1,4 +1,4 @@
-import AggregateRoot from "src/modules/Common/Domain/SeedWorks/AggregateRoot";
+import AggregateRoot from "src/modules/Common/Domain/AggregateRoot";
 import Email from "src/modules/User/Domain/Email";
 import NewUserRegistered from "src/modules/User/Domain/Events/Integration/NewUserRegistered";
 import IP from "src/modules/User/Domain/IP";

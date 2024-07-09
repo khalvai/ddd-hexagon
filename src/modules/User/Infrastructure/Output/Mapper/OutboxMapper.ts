@@ -1,5 +1,5 @@
 import { Injectable } from "@nestjs/common";
-import DomainEvent from "src/modules/Common/Domain/SeedWorks/DomainEvent";
+import DomainEvent from "src/modules/Common/Domain/DomainEvent";
 
 
 export interface OutboxModel {

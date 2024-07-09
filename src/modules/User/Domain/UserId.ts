@@ -1,6 +1,6 @@
 import Notification from "src/modules/Common/Application/Notification";
 import Result from "src/modules/Common/Application/Result";
-import UUID4 from "src/modules/Common/Domain/SeedWorks/UUID4";
+import UUID4 from "src/modules/Common/Domain/UUID4";
 
 export default class UserId extends UUID4 {
 

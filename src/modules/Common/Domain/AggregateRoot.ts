@@ -1,5 +1,5 @@
-import ConcurrencySafeEntity from 'src/modules/Common/Domain/SeedWorks/ConcurrencySafeEntity';
-import UUID4 from 'src/modules/Common/Domain/SeedWorks/UUID4';
+import ConcurrencySafeEntity from 'src/modules/Common/Domain/ConcurrencySafeEntity';
+import UUID4 from 'src/modules/Common/Domain/UUID4';
 
 export default abstract class AggregateRoot<
     Id extends UUID4,

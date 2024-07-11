@@ -32,7 +32,7 @@ import { EJSTemplate } from "src/modules/User/Infrastructure/Output/Template/Ejs
     imports: [
         PrismaModule,
         CqrsModule,
-        // RabbitMQModuleImpl
+        RabbitMQModuleImpl
     ],
     controllers: [UserHTTPPInputAdapter],
     providers: [

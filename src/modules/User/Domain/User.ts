@@ -47,24 +47,7 @@ export default class User extends AggregateRoot<UserId> {
         this.createdAt = now;
         this.updatedAt = now;
 
-        const e = new NewUserRegistered
-            (
-                userId.value,
-                email.value,
-                name.value,
-                ip.value
-            );
-
-        this.addEvent
-            (
-                new NewUserRegistered
-                    (
-                        userId.value,
-                        email.value,
-                        name.value,
-                        ip.value
-                    )
-            );
+        this.addEvent(NewUserRegistered.of(this, ip));
     }
 
 
@@ -77,4 +60,7 @@ export default class User extends AggregateRoot<UserId> {
         throw new Error("Method not implemented.");
     }
 
+    public isNull(): boolean {
+        return false
+    }
 }

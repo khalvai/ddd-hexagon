@@ -1,6 +1,5 @@
 import * as crypto from "crypto";
 import Result from "src/modules/Common/Application/Result";
-import Errors from "src/modules/Common/Domain/Exceptions/Errors";
 import ValueObject from "src/modules/Common/Domain/ValueObject";
 import Notification from "src/modules/Common/Application/Notification";
 export default class UUID4 extends ValueObject<string> {
@@ -12,7 +11,7 @@ export default class UUID4 extends ValueObject<string> {
 
         if (!UUID4.UUID4_VALIDATOR.test(trimUUID)) {
             const notification = new Notification();
-            notification.addError(Errors.INVALID_ID);
+            notification.addError("INVALID_ID");
             return { failure: notification };
         }
 

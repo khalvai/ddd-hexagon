@@ -4,28 +4,50 @@ import {
     ExceptionFilter,
     HttpException,
     HttpStatus,
-    InternalServerErrorException
+    InternalServerErrorException,
+    NotFoundException
 } from '@nestjs/common';
 import { HttpAdapterHost } from '@nestjs/core';
-import NotValidInputException from 'src/modules/Common/Domain/Exceptions/NotValidInput';
-// import * as Sentry from '@sentry/node';
+import Exception from '../../Domain/Exceptions/Exception';
+import NotValidInputException from '../../Domain/Exceptions/NotValidInput';
+import AlreadyExistsException from '../../Domain/Exceptions/AlreadyExistsException';
+
+
 @Catch()
 export class HttpExceptionFilter implements ExceptionFilter {
     constructor(
         private readonly httpAdapterHost: HttpAdapterHost,
     ) { }
 
-    catch(exception: HttpException, host: ArgumentsHost): any {
+    catch(exception: Exception, host: ArgumentsHost): any {
         const { httpAdapter } = this.httpAdapterHost;
 
         const ctx = host.switchToHttp();
         let message: any = "INTERNAL_SERVER_ERROR";
-        const httpStatus =
-            exception instanceof HttpException
-                ? exception.getStatus()
-                : HttpStatus.INTERNAL_SERVER_ERROR;
+        let httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
 
+        if (exception instanceof HttpException && exception.getStatus() !== 500) {
+            message = exception.getResponse();
+        }
+
+
+
+
+        if (exception instanceof NotValidInputException) {
+            message = exception.errorMessages
+            httpStatus = HttpStatus.BAD_REQUEST
+
+        }
+
+        if (exception instanceof NotFoundException) {
+            message = exception.message
+            httpStatus = HttpStatus.NOT_FOUND
+        }
+        if (exception instanceof AlreadyExistsException) {
+            message = exception.message
+            httpStatus = HttpStatus.BAD_REQUEST
+        }
 
         const responseBody = {
             statusCode: httpStatus,
@@ -35,26 +57,9 @@ export class HttpExceptionFilter implements ExceptionFilter {
         };
 
 
-
-        if (exception instanceof HttpException && exception.getStatus() !== 500) {
-            responseBody.message = exception.getResponse();
-        }
-
-
-
-
-        if (exception instanceof NotValidInputException) {
-            responseBody.message = exception.cause;
-        }
-
-
-
-
         httpAdapter.reply(ctx.getResponse(), responseBody, httpStatus);
 
         if (httpStatus === HttpStatus.INTERNAL_SERVER_ERROR) {
-
-
             const requestDetail = {
                 path: httpAdapter.getRequestUrl(ctx.getRequest()),
                 method: httpAdapter.getRequestMethod(ctx.getRequest()),

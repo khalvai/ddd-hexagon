@@ -4,9 +4,9 @@ import Result from "src/modules/Common/Application/Result";
 export default class Password extends ValueObject<string> {
 
 
-    public static PASSWORD_COULD_NOT_BE_AN_EMPTY_STRING = "نام نمایشی نمیتواند خالی باشد";
-    public static INVALID_LENGTH = "رمز عبور باید بین ۸ الی ۲۰ کاراکتر باشد";
-    public static PASSWORD_NOT_MATCH = "گذرواژه‌های وارد شده همخوانی ندارند ";
+    public static PASSWORD_COULD_NOT_BE_AN_EMPTY_STRING = "PASSWORD_COULD_NOT_BE_EMPTY";
+    public static INVALID_LENGTH = "PASSWORD_MUST_BETWEEN_8_AND_20_CHARACTERS";
+    public static PASSWORD_NOT_MATCH = "PASSWORD_AND_CONFIRM_PASSWORD_DO_NOT_MATCH";
 
 
     public static createFromInput(password: string): Result<Password, Notification> {

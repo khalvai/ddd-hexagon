@@ -4,7 +4,7 @@ import Result from "src/modules/Common/Application/Result";
 export default class Email extends ValueObject<string> {
     private static regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
-    public static INVALID_FORMAT = "فرمت ایمیل وارد شده معتبر نیست";
+    public static INVALID_FORMAT = "INVALID_EMAIL_FORMAT";
     public static MINIMUM_LENGTH = 6;
 
     private static isValid(email: string): boolean {

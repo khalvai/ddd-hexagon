@@ -8,7 +8,8 @@ interface EventPayload {
     name: string;
     ip: string;
 }
-export default class NewUserRegistered extends DomainEvent<EventPayload, "Integration"> {
+export default class NewUserRegistered extends DomainEvent<EventPayload> {
+    public isPublic: boolean = true
     private constructor(userId: string, email: string, name: string, ip: string) {
         super({ email, name, userId, ip });
     }

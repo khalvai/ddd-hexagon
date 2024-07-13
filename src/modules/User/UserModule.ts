@@ -20,67 +20,58 @@ import UserHTTPPInputAdapter from "src/modules/User/Infrastructure/Input/UserHTT
 import { LiaraEmailServiceProvider } from "src/modules/User/Infrastructure/Output/LiaraEmailServiceProvider";
 import { OutboxMapper } from "src/modules/User/Infrastructure/Output/Mapper/OutboxMapper";
 import UserMapper from "src/modules/User/Infrastructure/Output/Mapper/UserMapper";
-import { OutboxDispatcher } from "src/modules/User/Infrastructure/Output/OutboxDispatcher";
-import PrismaPostgresqlOutboxRepositoryImpl from "src/modules/User/Infrastructure/Output/Persistence/PostgresqlOutboxRepository";
 import PostgresqlOutboxRepository from "src/modules/User/Infrastructure/Output/Persistence/PostgresqlOutboxRepository";
 import { PostgresqlUserRepository } from "src/modules/User/Infrastructure/Output/Persistence/PostgresqlUserRepository";
 import PrismaModule from "src/modules/User/Infrastructure/Output/Persistence/PrismaModul";
 import { EJSTemplate } from "src/modules/User/Infrastructure/Output/Template/EjsTemplate";
-
+import { OutboxDispatcher } from "./Infrastructure/Output/OutboxDispatcher";
+import { ConsumerController } from "./Infrastructure/Input/Consumer";
 
 @Module({
-    imports: [
-        PrismaModule,
-        CqrsModule,
-        RabbitMQModuleImpl
-    ],
-    controllers: [UserHTTPPInputAdapter],
-    providers: [
-        {
-            provide: UserRepository,
-            useClass: PostgresqlUserRepository,
-        },
-        {
-            provide: PostgresqlOutboxRepository,
-            useClass: PrismaPostgresqlOutboxRepositoryImpl
-        },
-        {
-            provide: OutboxRepository,
-            useClass: PrismaPostgresqlOutboxRepositoryImpl
-        },
-        {
-            provide: TokenService,
-            useClass: JWTokenService
+  imports: [PrismaModule, CqrsModule, RabbitMQModuleImpl],
+  controllers: [UserHTTPPInputAdapter, ConsumerController],
+  providers: [
+    {
+      provide: UserRepository,
+      useClass: PostgresqlUserRepository,
+    },
 
-        },
-        {
-            provide: EncryptionService,
-            useClass: JWEncryptionService
-        },
-        {
-            provide: KeyStore,
-            useClass: JWKeyStore
-        },
-        {
-            provide: HashService,
-            useClass: Argon2HashService
-        },
-        {
-            provide: SigningService,
-            useClass: JWSigningService
-        },
-        {
-            provide: Template,
-            useClass: EJSTemplate
-        },
-        {
-            provide: EmailServiceProvider,
-            useClass: LiaraEmailServiceProvider
-        },
-        RegisterUseCaseImpl,
-        OutboxMapper,
-        UserMapper,
-        // OutboxDispatcher,
-    ]
+    {
+      provide: OutboxRepository,
+      useClass: PostgresqlOutboxRepository,
+    },
+    {
+      provide: TokenService,
+      useClass: JWTokenService,
+    },
+    {
+      provide: EncryptionService,
+      useClass: JWEncryptionService,
+    },
+    {
+      provide: KeyStore,
+      useClass: JWKeyStore,
+    },
+    {
+      provide: HashService,
+      useClass: Argon2HashService,
+    },
+    {
+      provide: SigningService,
+      useClass: JWSigningService,
+    },
+    {
+      provide: Template,
+      useClass: EJSTemplate,
+    },
+    {
+      provide: EmailServiceProvider,
+      useClass: LiaraEmailServiceProvider,
+    },
+    RegisterUseCaseImpl,
+    OutboxMapper,
+    UserMapper,
+    OutboxDispatcher,
+  ],
 })
-export class UserModule { }
+export class UserModule {}

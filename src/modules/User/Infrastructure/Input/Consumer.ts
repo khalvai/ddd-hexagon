@@ -3,18 +3,15 @@ import { Controller } from "@nestjs/common";
 import { Payload } from "@nestjs/microservices";
 import { ApiTags } from "@nestjs/swagger";
 
-
 @ApiTags("Consumer")
 @Controller()
-export class ConsumerController
-{
-
-    @RabbitSubscribe({
-        queue: 'User:Registered',
-        createQueueIfNotExists: true,
-    })
-    onContentGenerated(@Payload() event: any)
-    {
-        console.log('processing event:', event);
-    }
+export class ConsumerController {
+  @RabbitSubscribe({
+    queue: "NewUserRegistered",
+    exchange: "",
+    createQueueIfNotExists: true,
+  })
+  onContentGenerated(@Payload() event: any) {
+    console.log("processing event:", event);
+  }
 }

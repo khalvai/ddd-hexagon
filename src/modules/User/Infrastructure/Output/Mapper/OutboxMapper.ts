@@ -17,7 +17,7 @@ export interface OutboxModel {
 export class OutboxMapper {
 
 
-    toPersistence(event: DomainEvent<any, any>): OutboxModel {
+    toPersistence(event: DomainEvent<any>): OutboxModel {
         return {
             occurredOn: event.occurredOn,
             id: event.id.value,

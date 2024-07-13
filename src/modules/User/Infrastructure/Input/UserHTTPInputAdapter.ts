@@ -1,5 +1,17 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Inject, Ip, Post, UseFilters } from "@nestjs/common";
+import { RabbitSubscribe } from "@golevelup/nestjs-rabbitmq";
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Ip,
+  Post,
+  UseFilters,
+} from "@nestjs/common";
 import { CommandBus } from "@nestjs/cqrs";
+import { Payload } from "@nestjs/microservices";
 import { ApiTags } from "@nestjs/swagger";
 import Result from "src/modules/Common/Application/Result";
 import { HttpExceptionFilter } from "src/modules/Common/Infrastructure/Output/HttpExceptionFilter";
@@ -11,37 +23,50 @@ import { HttpRegisterCommand } from "src/modules/User/Infrastructure/Input/Dto/H
 @ApiTags("Authentication")
 @Controller("Auth")
 export default class UserHTTPPInputAdapter {
-    public constructor
-        (
-            private commandBus: CommandBus
-        ) { }
-    @Post("/Register")
-    public async registerNewUser(@Body() registerCommand: HttpRegisterCommand, @Ip() ip: string): Promise<void> {
+  public constructor(private commandBus: CommandBus) {}
+  @Post("/Register")
+  public async registerNewUser(
+    @Body() registerCommand: HttpRegisterCommand,
+    @Ip() ip: string,
+  ): Promise<void> {
+    const result = await this.commandBus.execute<RegisterCommand, Result<void>>(
+      new RegisterCommand(
+        registerCommand.email,
+        registerCommand.password,
+        registerCommand.confirmPassword,
+        registerCommand.name,
+        ip,
+      ),
+    );
 
-
-
-        const result = await this.commandBus.execute<RegisterCommand, Result<void>>(new RegisterCommand(registerCommand.email, registerCommand.password, registerCommand.confirmPassword, registerCommand.name, ip));
-
-        if ("failure" in result) {
-            throw result.failure;
-        }
-
+    if ("failure" in result) {
+      throw result.failure;
     }
-    // @Post("/Login")
-    // public async login(@Body() login: LoginCommand): Promise<LoginDto>
-    // {
-    //     return await this._loginInputPort.handle(login);
-    // }
-    // @Get("/VerifyEmailAddress/:emailVerificationToken")
-    // public async verifyEmailAddress(@Param() emailVerificationToken: VerifyEmailAddressCommand): Promise<void>
-    // {
-    //     return this._verifyEmailAddressInputPort.handle(emailVerificationToken);
-    // }
-    // @Get("test")
-    // public async test(): Promise<void>
-    // {
-    //     const token = await this._tokenService.signAndEncrypt(JSON.stringify({ name: "bahman" }), "AUTH", 5);
+  }
+  // @Post("/Login")
+  // public async login(@Body() login: LoginCommand): Promise<LoginDto>
+  // {
+  //     return await this._loginInputPort.handle(login);
+  // }
+  // @Get("/VerifyEmailAddress/:emailVerificationToken")
+  // public async verifyEmailAddress(@Param() emailVerificationToken: VerifyEmailAddressCommand): Promise<void>
+  // {
+  //     return this._verifyEmailAddressInputPort.handle(emailVerificationToken);
+  // }
+  // @Get("test")
+  // public async test(): Promise<void>
+  // {
+  //     const token = await this._tokenService.signAndEncrypt(JSON.stringify({ name: "bahman" }), "AUTH", 5);
 
-    //     console.log(token);
-    // }
+  //     console.log(token);
+  // }
+  //
+  @RabbitSubscribe({
+    queue: "NewUserRegistered",
+    exchange: "",
+    createQueueIfNotExists: true,
+  })
+  onContentGenerated(@Payload() event: any) {
+    console.log("processing event:", event);
+  }
 }

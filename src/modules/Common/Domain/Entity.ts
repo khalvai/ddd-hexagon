@@ -7,7 +7,7 @@ export default abstract class Entity<Id extends UUID4> {
     public id: Id
     private events: Set<DomainEvent<any>> = new Set();
 
-    protected addEvent(event: DomainEvent<any, any>): void {
+    protected addEvent(event: DomainEvent<any>): void {
 
         this.events.add(event);
     }
@@ -15,11 +15,6 @@ export default abstract class Entity<Id extends UUID4> {
         this.events.clear();
     }
     public getEvents(): Set<DomainEvent<any>> {
-        const a = this.events.entries();
-        for (const e of a) {
-            e[0].reactionType;
-
-        }
         return this.events;
     }
     public equals(entity: Entity<Id>): boolean {

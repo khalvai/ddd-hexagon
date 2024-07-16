@@ -1,10 +1,7 @@
 
-
-
-export interface SendVerificationEmailCommand
-{
-    email: string;
-    name: string;
-    userId: string;
-    ip: string;
+export class SendVerificationEmailCommand {
+    constructor(public readonly email: string,
+        public readonly name: string,
+        public readonly userId: string,
+        public readonly ip: string) { }
 }

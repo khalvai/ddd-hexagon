@@ -10,7 +10,6 @@ import JWEncryptionService from "src/modules/Common/Infrastructure/Output/JWEncr
 import JWKeyStore from "src/modules/Common/Infrastructure/Output/JWKeyStore";
 import JWSigningService from "src/modules/Common/Infrastructure/Output/JWSigningService";
 import JWTokenService from "src/modules/Common/Infrastructure/Output/JWTokenService";
-import { RabbitMQModuleImpl } from "src/modules/Common/Infrastructure/Output/RabbitMQPModule";
 import { RegisterUseCaseImpl } from "src/modules/User/Application/Ports/Input/RegisterUseCaseImpl";
 import { EmailServiceProvider } from "src/modules/User/Application/Ports/Output/EmailServiceProvider";
 import { OutboxRepository } from "src/modules/User/Application/Ports/Output/OutboxRepository";
@@ -25,11 +24,13 @@ import { PostgresqlUserRepository } from "src/modules/User/Infrastructure/Output
 import PrismaModule from "src/modules/User/Infrastructure/Output/Persistence/PrismaModul";
 import { EJSTemplate } from "src/modules/User/Infrastructure/Output/Template/EjsTemplate";
 import { OutboxDispatcher } from "./Infrastructure/Output/OutboxDispatcher";
-import { ConsumerController } from "./Infrastructure/Input/Consumer";
+import { Consumer } from "./Infrastructure/Input/Consumer";
+import { NestjsEventEmitterModule } from "src/modules/Common/Infrastructure/Output/NestjsEventEmitterModule";
+import { SendVerificationEmailImp } from "src/modules/User/Application/Ports/Input/SendVerificationEmailImpl";
 
 @Module({
-  imports: [PrismaModule, CqrsModule, RabbitMQModuleImpl],
-  controllers: [UserHTTPPInputAdapter, ConsumerController],
+  imports: [PrismaModule, CqrsModule, NestjsEventEmitterModule],
+  controllers: [UserHTTPPInputAdapter, Consumer],
   providers: [
     {
       provide: UserRepository,
@@ -69,9 +70,10 @@ import { ConsumerController } from "./Infrastructure/Input/Consumer";
       useClass: LiaraEmailServiceProvider,
     },
     RegisterUseCaseImpl,
+    SendVerificationEmailImp,
     OutboxMapper,
     UserMapper,
     OutboxDispatcher,
   ],
 })
-export class UserModule {}
+export class UserModule { }
